@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Candidate Document Portal – ต้นแบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f4f0;--card:#fff;--ink:#26262b;--mute:#6b6b73;--line:#deddd6;--accent:#ffc72c;--on-accent:#26262b;--ok:#17744a;--okbg:#e3f3ea;--warn:#9a5b00;--warnbg:#fff1d6;--bad:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c20;--card:#26262b;--ink:#f1f0ec;--mute:#a3a3ab;--line:#3b3b42;--okbg:#17372a;--ok:#6fd3a2;--warnbg:#3d2f10;--warn:#ffc972;--bad:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1c20;--card:#26262b;--ink:#f1f0ec;--mute:#a3a3ab;--line:#3b3b42;--okbg:#17372a;--ok:#6fd3a2;--warnbg:#3d2f10;--warn:#ffc972;--bad:#ff8a80;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 "Noto Sans Thai","Sarabun",system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 64px}
+header{border-bottom:3px solid var(--accent);padding:8px 0 14px;margin-bottom:14px}
+h1{font-size:21px;margin:0 0 2px;font-weight:700}
+.sub{color:var(--mute);font-size:13px}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:block;font-size:13px;color:var(--mute)}
+input[type=text]{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;margin-top:3px}
+.chk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px}
+.chk input{width:18px;height:18px;accent-color:var(--ok)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cat{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.cat.done{border-left-color:var(--ok)}
+.cat.todo{border-left-color:var(--accent)}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.num{font-weight:700;margin-right:6px}
+.th{color:var(--mute);font-weight:400}
+.hint{font-size:13px;color:var(--mute);margin:2px 0 8px}
+.btn{display:inline-block;padding:8px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--card);color:var(--ink);font:600 13px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn input{display:none}
+.files{list-style:none;margin:8px 0 0;padding:0}
+.files li{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 0;border-top:1px dashed var(--line);font-size:13px;word-break:break-word}
+.files small{color:var(--mute)}
+.x{border:0;background:none;color:var(--bad);cursor:pointer;font:600 13px inherit;font-family:inherit}
+.err{color:var(--bad);font-size:13px;margin-top:6px}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--warnbg);color:var(--warn);white-space:nowrap}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl td,.tbl th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+.tbl tr.row{cursor:pointer}
+.tbl tr.sel{background:var(--okbg)}
+.scroll{overflow-x:auto}
+select{font:inherit;padding:4px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);max-width:170px}
+.note{font-size:12px;color:var(--mute);margin-top:10px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%}
+#toast.on{opacity:1}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+    <div><h1 id="h1"></h1><div class="sub" id="hs"></div></div>
+    <button class="btn" id="out" style="display:none">ออกจากระบบ</button>
+  </div>
+</header>
+<main id="app"></main>
+</div>
+<div id="toast" role="status"></div>
+<script>
+var CATS=[
+['2.1','ID Card','บัตรประชาชน','ต้องลบศาสนาและกรุ๊ปเลือดก่อนอัปโหลด',['pdf','jpg','jpeg']],
+['2.2','Name & Surname Change','ใบเปลี่ยนชื่อหรือนามสกุล','เฉพาะผู้ที่เคยเปลี่ยนชื่อหรือนามสกุล',['pdf']],
+['2.3','House Registration','ทะเบียนบ้าน','',['pdf']],
+['2.4','Transcript','ใบเกรด','ต้องมีวันจบการศึกษาระบุ',['pdf']],
+['2.5','Military Certificate','ใบ สด.8 หรือ สด.43','เฉพาะผู้ชาย',['pdf']],
+['2.6','Health Check Report','ผลตรวจสุขภาพ','',['pdf']],
+['2.7','Receipt','ใบเสร็จผลตรวจสุขภาพ','',['pdf','jpg','jpeg']],
+['2.8','Krungsri Passbook','หน้าสมุดบัญชีกรุงศรี','บัญชีที่ยังใช้งานอยู่',['pdf','jpg','jpeg']],
+['2.9','Pay Slip','สลิปเงินเดือนย้อนหลัง 3 เดือน หรือ ทวิ 50 / ใบรับรองเงินเดือน','อัปโหลดได้หลายไฟล์',['pdf']]
+];
+var C={};CATS.forEach(function(c){C[c[0]]=c});
+var f=function(cat,o,e,s){return {cat:cat,o:o,ext:e,size:s}};
+var cands=[
+ {id:'me',srf:'001/2026',pos:'Collection Officer',first:'Somchai',last:'Jaidee',male:true,nc:false,idok:false,offer:false,files:[]},
+ {id:'b',srf:'002/2026',pos:'Credit Card Sales Executive',first:'Natthaya',last:'Srisuk',male:false,nc:true,idok:true,offer:false,files:[f('2.1','a.pdf','pdf',420),f('2.2','b.pdf','pdf',210),f('2.3','c.pdf','pdf',380),f('2.4','d.pdf','pdf',900),f('2.4','d2.pdf','pdf',700),f('2.6','e.pdf','pdf',510),f('2.7','f.jpg','jpg',300)]},
+ {id:'c',srf:'003/2026',pos:'Fraud Analyst',first:'Piyawat',last:'Kongchai',male:true,nc:false,idok:true,offer:true,files:CATS.filter(function(c){return c[0]!='2.2'}).map(function(c){return f(c[0],'x.pdf','pdf',350)})}
+];
+var role='',view='cand',sel='b',q='',toastT,lr='cand',step=0,em='somchai@example.com';
+function me(){return cands[0]}
+function clean(s){s=(s||'').replace(/[^A-Za-z\- ]/g,'').trim();return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase()}
+function base(c){return (clean(c.first)||'Name')+' '+(clean(c.last)||'Surname')}
+function req(c){return CATS.filter(function(k){return (k[0]!='2.2'||c.nc)&&(k[0]!='2.5'||c.male)})}
+function inCat(c,k){return c.files.filter(function(x){return x.cat==k})}
+function fname(c,x){var l=inCat(c,x.cat),n=l.length>1?' ('+(l.indexOf(x)+1)+')':'';return x.cat+' '+C[x.cat][1].replace(/[\\\/:*?"<>|]/g,'')+' - '+base(c)+n+'.'+x.ext}
+function done(c){var r=req(c);return r.filter(function(k){return inCat(c,k[0]).length&&(k[0]!='2.1'||c.idok)}).length}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='on';clearTimeout(toastT);toastT=setTimeout(function(){t.className=''},2600)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
+function prog(c){var r=req(c).length,d=done(c);return '<div class="bar"><i style="width:'+(d/r*100)+'%"></i></div><div class="sub">ครบแล้ว '+d+' จาก '+r+' หมวด</div>'}
+
+function topbar(){
+ var t=document.getElementById('h1'),s=document.getElementById('hs'),b=document.getElementById('out'),c=me();
+ b.style.display=role?'':'none';
+ if(!role){t.textContent='Candidate Document Portal';s.textContent='ระบบรวบรวมเอกสารการจ้างงาน · ต้นแบบ ข้อมูลสมมติทั้งหมด'}
+ else if(role=='cand'){t.textContent='เอกสารสำหรับการจ้างงาน';s.textContent='SRF '+c.srf+' · '+c.pos}
+ else{t.textContent='จัดการเอกสารผู้สมัคร';s.textContent='เข้าสู่ระบบเป็น '+(role=='rec'?'Recruiter':'Hiring')}
+}
+document.getElementById('out').onclick=function(){role='';step=0;q='';render()};
+function enter(r){role=r;view=r=='cand'?'cand':'rec';render()}
+function loginView(a){
+ var h='<div class="panel"><b>เข้าสู่ระบบในฐานะ</b><div class="tabs" style="margin:10px 0 0"><button data-r="cand" aria-selected="'+(lr=='cand')+'">แคนดิเดต</button><button data-r="staff" aria-selected="'+(lr=='staff')+'">คนในองค์กร</button></div></div><div class="panel">';
+ if(lr=='cand'){
+  h+='<label class="f">อีเมลที่ได้รับเชิญ<input type="text" id="em" value="'+esc(em)+'" autocomplete="off"></label>';
+  if(step==0)h+='<div style="margin-top:12px"><button class="btn pri" id="go">ส่งรหัส OTP ไปที่อีเมล</button></div>';
+  else h+='<label class="f" style="margin-top:10px">รหัส OTP 6 หลัก<input type="text" id="otp" inputmode="numeric" maxlength="6" placeholder="ต้นแบบ: ใส่เลขอะไรก็ได้"></label><div style="margin-top:12px"><button class="btn pri" id="go">เข้าสู่ระบบ</button></div>';
+  h+='<div class="note">แคนดิเดตเห็นและแก้ไขได้เฉพาะเอกสารของ SRF ที่ตัวเองได้รับเชิญเท่านั้น</div>';
+ }else{
+  h+='<label class="f">บทบาท<select id="rs" style="width:100%;max-width:none;margin-top:3px"><option value="rec">Recruiter (TA)</option><option value="hire">Hiring</option></select></label>'
+  +'<div style="margin-top:12px"><button class="btn pri" id="go">เข้าสู่ระบบด้วยบัญชีบริษัท (SSO)</button></div>'
+  +'<div class="note">Recruiter: เห็นทุก SRF ที่ดูแล เพิ่ม/ย้าย/ลบไฟล์ได้ · Hiring: ดูและดาวน์โหลดได้อย่างเดียว เห็นเฉพาะผู้ที่ผ่าน offer แล้ว · ของจริงเชื่อม Microsoft Entra ID</div>';
+ }
+ a.innerHTML=h+'</div>';
+ a.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){lr=b.getAttribute('data-r');step=0;render()}});
+ var e=document.getElementById('em');if(e)e.oninput=function(){em=e.value};
+ document.getElementById('go').onclick=function(){
+  if(lr=='staff')return enter(document.getElementById('rs').value);
+  if(step==0)step=1;else return enter('cand');
+  render();
+ };
+}
+function render(){
+ var a=document.getElementById('app');topbar();
+ if(!role){loginView(a);return}
+ if(view=='cand'){
+  var c=me();
+  a.innerHTML='<div class="panel"><div class="grid"><label class="f">ชื่อ (ภาษาอังกฤษ)<input type="text" id="fn" value="'+esc(c.first)+'" autocomplete="off"></label><label class="f">นามสกุล (ภาษาอังกฤษ)<input type="text" id="ln" value="'+esc(c.last)+'" autocomplete="off"></label></div>'
+  +'<label class="chk"><input type="checkbox" id="mc"'+(c.male?' checked':'')+'> เป็นผู้ชาย (ต้องส่งใบ สด.8 / สด.43)</label>'
+  +'<label class="chk"><input type="checkbox" id="nc"'+(c.nc?' checked':'')+'> เคยเปลี่ยนชื่อหรือนามสกุล</label>'
+  +'<div class="note">ชื่อไฟล์จะตั้งให้อัตโนมัติ เช่น <b id="ex"></b></div><div id="pg"></div></div><div id="cards"></div>';
+  var upd=function(){c.first=document.getElementById('fn').value;c.last=document.getElementById('ln').value;cards()};
+  document.getElementById('fn').oninput=upd;document.getElementById('ln').oninput=upd;
+  document.getElementById('mc').onchange=function(){c.male=this.checked;cards()};
+  document.getElementById('nc').onchange=function(){c.nc=this.checked;cards()};
+  cards();
+ } else recView(a);
+}
+
+function cards(){
+ var c=me(),h='';
+ document.getElementById('ex').textContent='2.4 Transcript - '+base(c)+'.pdf';
+ document.getElementById('pg').innerHTML=prog(c);
+ req(c).forEach(function(k){
+  var l=inCat(c,k[0]),ok=l.length&&(k[0]!='2.1'||c.idok);
+  h+='<section class="cat '+(ok?'done':'todo')+'"><div class="top"><div><span class="num">'+k[0]+'</span>'+k[1]+' <span class="th">('+k[2]+')</span>'
+  +(k[3]?'<div class="hint">'+k[3]+'</div>':'')+'</div><label class="btn '+(l.length?'':'pri')+'">'+(l.length?'เพิ่มไฟล์':'อัปโหลด')
+  +'<input type="file" multiple accept="'+k[4].map(function(e){return '.'+e}).join(',')+'" data-k="'+k[0]+'"></label></div>';
+  if(k[0]=='2.1')h+='<label class="chk"><input type="checkbox" data-idok'+(c.idok?' checked':'')+'> ฉันลบศาสนาและกรุ๊ปเลือดแล้ว</label>';
+  h+='<div class="err" id="e'+k[0].replace('.','')+'"></div>';
+  if(l.length){h+='<ul class="files">';l.forEach(function(x){h+='<li><span>'+esc(fname(c,x))+' <small>'+x.size+' KB</small></span><button class="x" data-rm="'+c.files.indexOf(x)+'">ลบ</button></li>'});h+='</ul>'}
+  h+='<div class="note">รับไฟล์: '+k[4].join(', ').toUpperCase()+'</div></section>';
+ });
+ var d=document.getElementById('cards');d.innerHTML=h;
+ d.querySelectorAll('input[type=file]').forEach(function(i){i.onchange=function(){
+  var k=i.getAttribute('data-k'),bad=[],ok=C[k][4];
+  Array.prototype.forEach.call(i.files,function(fl){var e=fl.name.split('.').pop().toLowerCase();
+   if(ok.indexOf(e)<0)bad.push(fl.name);else c.files.push(f(k,fl.name,e,Math.max(1,Math.round(fl.size/1024))))});
+  cards();
+  if(bad.length){var el=document.getElementById('e'+k.replace('.',''));if(el)el.textContent='รับเฉพาะ '+ok.join(', ').toUpperCase()+' ไม่รับ: '+bad.join(', ')}
+  else toast('อัปโหลดแล้ว');
+ }});
+ d.querySelectorAll('[data-rm]').forEach(function(b){b.onclick=function(){c.files.splice(+b.getAttribute('data-rm'),1);cards()}});
+ var ix=d.querySelector('[data-idok]');if(ix)ix.onchange=function(){c.idok=ix.checked;cards()};
+ if(!document.getElementById('app').querySelector('#send')&&done(c)==req(c).length){d.insertAdjacentHTML('beforeend','<button class="btn pri" id="send" style="width:100%;padding:12px">ส่งเอกสารให้ Recruiter</button>');document.getElementById('send').onclick=function(){toast('ส่งแล้ว Recruiter ได้รับแจ้งเตือน (จำลอง)')}}
+}
+
+function match(c,s){s=s.toLowerCase().trim();if(!s)return true;var n=s.replace(/^srf\s*/,'');
+ return (base(c)+' '+c.pos).toLowerCase().indexOf(s)>=0||c.srf.indexOf(n)>=0}
+function recView(a){
+ a.innerHTML='<div class="panel"><label class="f">ค้นหาชื่อแคนดิเดต ตำแหน่ง หรือเลข SRF<input type="text" id="q" value="'+esc(q)+'" placeholder="เช่น Natthaya, Fraud, 002/2026" autocomplete="off"></label><div class="note">'
+ +(role=='rec'?'สิทธิ์ Recruiter: แก้ไขเอกสารได้':'สิทธิ์ Hiring: ดูและดาวน์โหลดได้ เห็นเฉพาะผู้ที่ผ่าน offer แล้ว')+'</div></div><div id="res"></div>';
+ document.getElementById('q').oninput=function(){q=this.value;results()};
+ results();
+}
+function results(){
+ var rw=role=='rec',r=document.getElementById('res');
+ var list=cands.filter(function(c){return (rw||c.offer)&&match(c,q)});
+ if(list.length&&!list.some(function(c){return c.id==sel}))sel=list[0].id;
+ var h='<div class="sub" style="margin-bottom:8px">พบ '+list.length+' คน (1 SRF ต่อ 1 แคนดิเดต)</div>';
+ if(!list.length)h+='<div class="panel">ไม่พบผู้สมัคร ลองค้นด้วยชื่อ ตำแหน่ง หรือเลข SRF เช่น 001/2026</div>';
+ list.forEach(function(c){var n=req(c).length,d=done(c);
+  h+='<section class="cat '+(d==n?'done':'todo')+'" data-c="'+c.id+'" style="cursor:pointer'+(c.id==sel?';outline:2px solid var(--accent)':'')+'"><div class="top"><div><b>'+esc(base(c))+'</b><div class="hint" style="margin:0">'+esc(c.pos)+' · SRF '+c.srf+'</div></div><span class="tag'+(d==n?' ok':'')+'">'+(d==n?'ครบ':'ขาด '+(n-d))+'</span></div></section>'});
+ var c=list.filter(function(x){return x.id==sel})[0];
+ if(c){
+  h+='<div class="panel"><b>'+esc(base(c))+'</b> <span class="th">SRF '+c.srf+'</span>'+prog(c);
+  var miss=req(c).filter(function(k){return !inCat(c,k[0]).length}).map(function(k){return k[0]+' '+k[1]});
+  if(miss.length)h+='<div class="hint">ยังขาด: '+miss.join(', ')+'</div>';
+  h+='<ul class="files">';
+  if(!c.files.length)h+='<li>ยังไม่มีไฟล์</li>';
+  c.files.forEach(function(x,i){h+='<li><span>'+esc(fname(c,x))+'</span>'+(rw?'<span><select data-mv="'+i+'" aria-label="ย้ายหมวด">'+CATS.map(function(k){return '<option value="'+k[0]+'"'+(k[0]==x.cat?' selected':'')+'>ย้ายไป '+k[0]+' '+k[1]+'</option>'}).join('')+'</select> <button class="x" data-rm="'+i+'">ลบ</button></span>':'')+'</li>'});
+  h+='</ul>';
+  if(rw)h+='<label class="chk"><input type="checkbox" id="of"'+(c.offer?' checked':'')+'> ทำ offer แล้ว (เปิดให้ทีม Hiring เห็น)</label>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn'+(rw?'':' pri')+'" data-t="zip">ดาวน์โหลดทั้งชุด (zip)</button></div>'
+  +'<div class="note">ทุกการเปิด/ย้าย/ลบไฟล์จะบันทึกใน audit log (จำลอง) · ทีม Hiring เปิดดูในระบบเดียวกัน ไม่ต้องส่งไฟล์ต่อ</div></div>';
+ }
+ r.innerHTML=h;
+ r.querySelectorAll('[data-c]').forEach(function(e){e.onclick=function(){sel=e.getAttribute('data-c');results()}});
+ r.querySelectorAll('[data-mv]').forEach(function(s){s.onchange=function(){c.files[+s.getAttribute('data-mv')].cat=s.value;toast('ย้ายหมวดและเปลี่ยนชื่อไฟล์แล้ว');results()}});
+ r.querySelectorAll('[data-rm]').forEach(function(b){b.onclick=function(){c.files.splice(+b.getAttribute('data-rm'),1);results()}});
+ var of=document.getElementById('of');if(of)of.onchange=function(){c.offer=of.checked;toast(of.checked?'เปิดให้ Hiring เห็นแล้ว':'ซ่อนจาก Hiring แล้ว')};
+ r.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){toast('ต้นแบบ: ยังไม่ได้เชื่อมระบบจัดเก็บจริง')}});
+}
+render();
+</script>
+</body>
+</html>
